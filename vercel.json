@@ -12,6 +12,14 @@
     {
       "src": "api/heartbeat.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.png",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -22,6 +30,14 @@
     {
       "src": "/api/heartbeat",
       "dest": "/api/heartbeat.js"
+    },
+    {
+      "src": "/qrcode-popup.html",
+      "dest": "/qrcode-popup.html"
+    },
+    {
+      "src": "/qrcode.png",
+      "dest": "/qrcode.png"
     },
     {
       "src": "/",
