@@ -69,7 +69,7 @@ function displaySubmissions() {
     submissionsDiv.innerHTML = ''; // Clear existing
     
     submissions.forEach(submission => {
-        const sentenceDiv = document.createElement('div');
+    const sentenceDiv = document.createElement('div');
         sentenceDiv.textContent = submission.text;
         sentenceDiv.style.margin = '10px 0';
         sentenceDiv.style.padding = '10px';
@@ -79,8 +79,8 @@ function displaySubmissions() {
         sentenceDiv.style.border = '1px solid #ddd';
         sentenceDiv.style.fontFamily = 'Times New Roman, serif';
         sentenceDiv.style.fontSize = '16px';
-        submissionsDiv.appendChild(sentenceDiv);
-    });
+    submissionsDiv.appendChild(sentenceDiv);
+});
 }
 
 function updateUserCount(count) {
