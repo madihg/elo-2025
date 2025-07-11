@@ -36,6 +36,22 @@
       "dest": "/qrcode-popup.html"
     },
     {
+      "src": "/psy-grey.html",
+      "dest": "/psy-grey.html"
+    },
+    {
+      "src": "/towers.html",
+      "dest": "/towers.html"
+    },
+    {
+      "src": "/erosion.html",
+      "dest": "/erosion.html"
+    },
+    {
+      "src": "/spread.html",
+      "dest": "/spread.html"
+    },
+    {
       "src": "/qrcode.png",
       "dest": "/qrcode.png"
     },
