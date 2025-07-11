@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Times New Roman', serif;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .qr-container {
+            text-align: center;
+            background: white;
+            border: 2px solid black;
+            padding: 30px;
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+
+        .qr-container img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: black;
+            font-family: 'Times New Roman', serif;
+            padding: 5px 10px;
+        }
+
+        .close-button:hover {
+            background: #f0f0f0;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .qr-container {
+                padding: 20px;
+            }
+            
+            .close-button {
+                font-size: 20px;
+                top: 5px;
+                right: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .qr-container {
+                padding: 15px;
+            }
+            
+            .close-button {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="close-button" onclick="window.close()">×</button>
+    <div class="qr-container">
+        <img src="qrcode.png" alt="QR Code">
+    </div>
+
+    <script>
+        // Auto-close after 10 seconds (optional)
+        setTimeout(() => {
+            window.close();
+        }, 10000);
+
+        // Close on escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                window.close();
+            }
+        });
+    </script>
+</body>
+</html> 
