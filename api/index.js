@@ -15,8 +15,8 @@ const io = new Server(server, {
 
 let userCount = 0;
 
-// Serve static files
-app.use(express.static(path.join(__dirname, "../public")));
+// Serve static files from public directory
+app.use('/public', express.static(path.join(__dirname, '../public')));
 
 // Serve the word spreader at root
 app.get("/", (req, res) => {
@@ -26,6 +26,12 @@ app.get("/", (req, res) => {
 // Serve how-do-you-home.html
 app.get("/public/how-do-you-home.html", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/how-do-you-home.html"));
+});
+
+// Serve client.js
+app.get("/public/client.js", (req, res) => {
+  res.setHeader('Content-Type', 'application/javascript');
+  res.sendFile(path.join(__dirname, "../public/client.js"));
 });
 
 // Socket.IO connection handling
