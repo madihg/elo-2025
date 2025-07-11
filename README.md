@@ -99,4 +99,4 @@ socket.on('newMsgFromServer', function(data){
 function addMsg(user, msg){
 	$('#messages').append("<p><strong>"+user+": </strong>"+msg+"</p>")
 }
-```
+```# Updated for Vercel deployment
