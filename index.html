@@ -66,6 +66,36 @@
             transform: scale(0.8);
         }
 
+        .qr-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border: 2px solid black;
+            padding: 20px;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .qr-popup img {
+            max-width: 200px;
+            height: auto;
+            display: block;
+        }
+
+        .qr-close {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: black;
+        }
+
         /* Button positions for desktop */
         .btn-1 { bottom: 20%; right: 15%; }
         .btn-2 { bottom: 35%; right: 25%; }
@@ -114,6 +144,10 @@
             h1 {
                 font-size: 2em;
             }
+
+            .qr-popup img {
+                max-width: 150px;
+            }
         }
 
         /* Very small screens */
@@ -135,6 +169,10 @@
             h1 {
                 font-size: 1.5em;
             }
+
+            .qr-popup img {
+                max-width: 120px;
+            }
         }
     </style>
 </head>
@@ -142,13 +180,19 @@
     <div class="container">
         <h1 id="title">نحن نشعر</h1>
         
-        <a href="public/how-do-you-home.html" class="letter-button btn-1" target="_blank" onclick="openPopup(this.href, event)">ن</a>
+        <a href="public/how-do-you-home.html" class="letter-button btn-1" target="_blank" onclick="openFirstButton(this.href, event)">ن</a>
         <a href="psy-grey.html" class="letter-button btn-2" target="_blank" onclick="openPopup(this.href, event)">ح</a>
         <a href="towers.html" class="letter-button btn-3" target="_blank" onclick="openPopup(this.href, event)">ن</a>
         <a href="erosion.html" class="letter-button btn-4" target="_blank" onclick="openPopup(this.href, event)">ن</a>
         <a href="spread.html" class="letter-button btn-5" target="_blank" onclick="openPopup(this.href, event)">ش</a>
         <a href="https://scam-ai-poet.vercel.app/" class="letter-button btn-6" target="_blank" onclick="openPopup(this.href, event)">ع</a>
         <a href="https://www.oulipo.xyz/we-called-us-poetry.html#" class="letter-button btn-7" target="_blank" onclick="handleLastButton(this.href, event)">ر</a>
+    </div>
+
+    <!-- QR Code Popup -->
+    <div class="qr-popup" id="qrPopup">
+        <button class="qr-close" onclick="closeQRPopup()">×</button>
+        <img src="qrcode.png" alt="QR Code">
     </div>
 
     <script>
@@ -159,6 +203,33 @@
                 popup.focus();
             }
         }
+
+        function openFirstButton(url, event) {
+            event.preventDefault();
+            
+            // Open the how-do-you-home page
+            const popup = window.open(url, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
+            if (popup) {
+                popup.focus();
+            }
+            
+            // Show QR code popup
+            setTimeout(() => {
+                document.getElementById('qrPopup').style.display = 'block';
+            }, 500);
+        }
+
+        function closeQRPopup() {
+            document.getElementById('qrPopup').style.display = 'none';
+        }
+
+        // Close QR popup when clicking outside
+        document.addEventListener('click', function(event) {
+            const qrPopup = document.getElementById('qrPopup');
+            if (event.target === qrPopup) {
+                closeQRPopup();
+            }
+        });
 
         function handleLastButton(url, event) {
             event.preventDefault();
