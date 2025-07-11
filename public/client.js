@@ -3,12 +3,19 @@ let submissions = [];
 let lastSubmissionCount = 0;
 
 async function submitSentence() {
+    console.log('submitSentence function called');
     const userInput = document.getElementById('userInput');
     const text = userInput.value.trim();
     
-    if (!text) return;
+    console.log('Text to submit:', text);
+    
+    if (!text) {
+        console.log('No text to submit');
+        return;
+    }
     
     try {
+        console.log('Sending POST request to /api/submit');
         const response = await fetch('/api/submit', {
             method: 'POST',
             headers: {
@@ -17,12 +24,17 @@ async function submitSentence() {
             body: JSON.stringify({ text })
         });
         
+        console.log('Response status:', response.status);
+        
         if (response.ok) {
             const result = await response.json();
+            console.log('Submit result:', result);
             userInput.value = ''; // Clear input
             await loadSubmissions(); // Refresh submissions
         } else {
-            console.error('Failed to submit');
+            console.error('Failed to submit, status:', response.status);
+            const errorText = await response.text();
+            console.error('Error response:', errorText);
         }
     } catch (error) {
         console.error('Error submitting:', error);
@@ -30,13 +42,19 @@ async function submitSentence() {
 }
 
 async function loadSubmissions() {
+    console.log('Loading submissions...');
     try {
         const response = await fetch('/api/submit');
+        console.log('Load response status:', response.status);
+        
         if (response.ok) {
             const data = await response.json();
+            console.log('Loaded data:', data);
             submissions = data.submissions;
             displaySubmissions();
             updateUserCount(data.count);
+        } else {
+            console.error('Failed to load submissions, status:', response.status);
         }
     } catch (error) {
         console.error('Error loading submissions:', error);
@@ -44,6 +62,7 @@ async function loadSubmissions() {
 }
 
 function displaySubmissions() {
+    console.log('Displaying submissions:', submissions);
     const submissionsDiv = document.getElementById('submissions');
     submissionsDiv.innerHTML = ''; // Clear existing
     
@@ -68,6 +87,7 @@ function updateUserCount(count) {
 
 // Load submissions when page loads
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Page loaded, initializing...');
     loadSubmissions();
     
     // Poll for new submissions every 3 seconds
