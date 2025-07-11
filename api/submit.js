@@ -1,19 +1,6 @@
-const fs = require('fs');
-const path = require('path');
-
-// Simple file-based storage for submissions
-const submissionsFile = path.join(__dirname, '../data/submissions.json');
-
-// Ensure data directory exists
-const dataDir = path.join(__dirname, '../data');
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
-}
-
-// Initialize submissions file if it doesn't exist
-if (!fs.existsSync(submissionsFile)) {
-  fs.writeFileSync(submissionsFile, JSON.stringify([]));
-}
+// In-memory storage for Vercel serverless compatibility
+let submissions = [];
+let submissionCount = 0;
 
 module.exports = (req, res) => {
   console.log('API endpoint called:', req.method, req.url);
@@ -44,11 +31,7 @@ module.exports = (req, res) => {
         return res.status(400).json({ error: 'Text is required' });
       }
 
-      // Read existing submissions
-      const submissions = JSON.parse(fs.readFileSync(submissionsFile, 'utf8'));
-      console.log('Current submissions:', submissions);
-      
-      // Add new submission
+      // Add new submission to in-memory array
       const newSubmission = {
         id: Date.now() + Math.random().toString(36).substr(2, 9),
         text: text.trim(),
@@ -56,10 +39,10 @@ module.exports = (req, res) => {
       };
       
       submissions.push(newSubmission);
-      console.log('Added new submission:', newSubmission);
+      submissionCount++;
       
-      // Write back to file
-      fs.writeFileSync(submissionsFile, JSON.stringify(submissions, null, 2));
+      console.log('Added new submission:', newSubmission);
+      console.log('Total submissions:', submissions.length);
       
       res.status(200).json({ success: true, submission: newSubmission });
     } catch (error) {
@@ -70,7 +53,6 @@ module.exports = (req, res) => {
     console.log('Handling GET request');
     // Return all submissions
     try {
-      const submissions = JSON.parse(fs.readFileSync(submissionsFile, 'utf8'));
       console.log('Returning submissions:', submissions);
       res.status(200).json({ submissions, count: submissions.length });
     } catch (error) {
