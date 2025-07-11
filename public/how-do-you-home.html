@@ -28,39 +28,16 @@
     </style>
   </head>
   <body>
-    <h1>How do you home?</h1>
+    <h1>We've known for quite a while now that...</h1>
     <input type="text" id="userInput" placeholder="Enter your sentence" />
     <button onclick="submitSentence()">Enter</button>
 
     <div id="submissions"></div>
     <div id="textInputContainer">
       <div id="userCount">Loading...</div>
-      <input type="text" id="specialTextField" placeholder="finding home" />
     </div>
 
 
     <script src="client.js"></script>
-    <script>
-      document
-        .getElementById("specialTextField")
-        .addEventListener("input", function () {
-          const value = this.value;
-          const container = document.getElementById("textInputContainer");
-
-          // Check if the special message is typed and if the button already exists
-          if (
-            value.toLowerCase() === "thank you" &&
-            !document.getElementById("specialButton")
-          ) {
-            const button = document.createElement("button");
-            button.id = "specialButton";
-            button.textContent = "stay in touch ♥";
-            button.onclick = function () {
-              window.location.href = "https://www.instagram.com/yalla_halim"; // Replace with the actual URL
-            };
-            container.appendChild(button);
-          }
-        });
-    </script>
   </body>
 </html>
