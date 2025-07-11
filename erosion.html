@@ -55,10 +55,11 @@
         .levitate {
             transition: top 3s linear;
         }
-        .price {
+        .letter {
             position: absolute;
-            font-size: 2em;
-            font-family: 'Courier New', monospace;
+            font-size: 3em;
+            font-family: 'Times New Roman', serif;
+            color: black;
         }
         .lightning-button {
             position: absolute;
@@ -83,18 +84,27 @@
         </div>
         <div class="divider"></div>
         <div id="blobsContainer"></div>
-        <div id="price" class="price">$600</div>
+        <div id="letter" class="letter">ن</div>
     </div>
 
     <script>
         const blobsContainer = document.getElementById('blobsContainer');
-        const priceElement = document.getElementById('price');
+        const letterElement = document.getElementById('letter');
         const parts = 10;
         let blobs = [];
         let crossCount = 0;
         let lastSide = 'left';
-        let price = 600;
         let allBlobsFallen = false;
+        let isArabic = true;
+
+        // Arabic and Latin letters
+        const arabicLetters = ['ن', 'ح', 'ش', 'ع', 'ر', 'ت', 'ب', 'ث', 'ج', 'خ', 'د', 'ذ', 'ز', 'س', 'ص', 'ض', 'ط', 'ظ', 'غ', 'ف', 'ق', 'ك', 'ل', 'م', 'ه', 'و', 'ي'];
+        const latinLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+
+        function getRandomLetter(isArabic) {
+            const letters = isArabic ? arabicLetters : latinLetters;
+            return letters[Math.floor(Math.random() * letters.length)];
+        }
 
         // Generate circle positions for blobs
         function generateCirclePositions(radius, count) {
@@ -124,8 +134,8 @@
                 blob.element.style.top = e.clientY + blob.y + 'px';
             });
 
-            priceElement.style.left = e.clientX + 'px';
-            priceElement.style.top = e.clientY + 'px';
+            letterElement.style.left = e.clientX + 'px';
+            letterElement.style.top = e.clientY + 'px';
 
             let centerX = window.innerWidth / 2;
             let mouseX = e.clientX;
@@ -135,7 +145,7 @@
                 if (crossCount >= 2) {
                     crossCount = 0;
                     crumbleBlob();
-                    increasePrice();
+                    changeLetter();
                 }
             }
         });
@@ -144,7 +154,7 @@
             if (blobs.length > 0) {
                 let blob = blobs.pop().element;
                 if (blobs.length === 1) {
-                    priceElement.remove();
+                    letterElement.remove();
                     allBlobsFallen = true;
                 }
                 blob.classList.add('crumbled');
@@ -155,10 +165,10 @@
             }
         }
 
-        function increasePrice() {
-            if (price < 1800 && !allBlobsFallen) {
-                price += Math.floor(Math.random() * 200) + 1;
-                priceElement.textContent = `$${price}`;
+        function changeLetter() {
+            if (!allBlobsFallen) {
+                isArabic = !isArabic;
+                letterElement.textContent = getRandomLetter(isArabic);
             }
         }
 
@@ -180,7 +190,7 @@
 
             setTimeout(() => {
                 lightningEmoji.remove();
-            }, 9000); // Tripled the duration
+            }, 9000);
         }
 
         function levitateBlobs() {
@@ -192,7 +202,7 @@
 
             setTimeout(() => {
                 displayLightningEmojisInCircle();
-            }, 6000); // Reduced time for quicker appearance
+            }, 6000);
         }
 
         function displayLightningEmojisInCircle() {

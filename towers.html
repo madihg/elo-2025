@@ -41,17 +41,7 @@
             /* Add this line to round the corners */
         }
 
-        #message {
-            position: absolute;
-            top: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 18px;
-            text-align: center;
-            font-family: 'Merriweather', serif;
-            display: none;
-            z-index: 10;
-        }
+
 
         #shape-container {
             position: absolute;
@@ -74,7 +64,7 @@
     <div id="canvas-container">
         <div id="shape-container"></div>
     </div>
-    <div id="message"></div>
+
     <button id="reset-button">again</button>
 
     <script>
@@ -101,7 +91,6 @@
         });
 
         const resetButton = document.getElementById('reset-button');
-        const messageElement = document.getElementById('message');
 
         const messages = [
             "Knock the blocks of reality",
@@ -168,8 +157,6 @@
                         jiggleTower(leftTower);
                         rightTowerFallen = true;
                         resetButton.style.display = 'block';
-                        messageElement.style.display = 'block';
-                        messageElement.textContent = messages[currentMessageIndex];
                         currentMessageIndex = (currentMessageIndex + 1) % messages.length;
                         break;
                     }
@@ -196,7 +183,6 @@
             setupTowers();
             Composite.add(world, ground);
             resetButton.style.display = 'none';
-            messageElement.style.display = 'none';
             rightTowerFallen = false;
         });
 
