@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>*</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #000000;
+    }
+    
+    #playButton {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      background-color: rgba(255, 255, 255, 0.7);
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .play-icon {
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 10px 0 10px 15px;
+      border-color: transparent transparent transparent #333;
+      margin-left: 3px;
+    }
+    
+    .stop-icon {
+      width: 15px;
+      height: 15px;
+      background-color: #333;
+    }
+
+    .image-container {
+      position: fixed;
+      width: 300px;
+      height: 300px;
+      background-color: white;
+      border: 1px solid black;
+      display: none;
+      z-index: 1000;
+    }
+
+    .image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+  <div id="playButton">
+    <div class="play-icon"></div>
+    <div class="stop-icon" style="display: none;"></div>
+  </div>
+  
+  <script>
+    let audio;
+    let psychShapes = [];
+    let currentSize = 30; // Initial size
+    let clickCount = 0;
+    const sampleImages = [
+      'assets/second-foundation.jpg',
+      'assets/lee-seedol.png',
+      'assets/annihilation.png'
+    ];
+    
+    // Play button setup
+    const playButton = document.getElementById('playButton');
+    playButton.addEventListener('click', toggleAudio);
+    
+    // Audio setup
+    function setupAudio() {
+      audio = new Audio('assets/psy-grey/thetune.wav');
+      audio.loop = true;
+    }
+    
+    function toggleAudio() {
+      if (!audio) {
+        setupAudio();
+      }
+      
+      const playIcon = document.querySelector('.play-icon');
+      const stopIcon = document.querySelector('.stop-icon');
+      
+      if (audio.paused) {
+        audio.play();
+        playIcon.style.display = 'none';
+        stopIcon.style.display = 'block';
+      } else {
+        audio.pause();
+        playIcon.style.display = 'block';
+        stopIcon.style.display = 'none';
+      }
+    }
+
+    function showImage(x, y) {
+      if (clickCount < sampleImages.length) {
+        const container = document.createElement('div');
+        container.className = 'image-container';
+        container.style.left = `${x - 150}px`;
+        container.style.top = `${y - 150}px`;
+        
+        const img = document.createElement('img');
+        img.src = sampleImages[clickCount];
+        container.appendChild(img);
+        
+        document.body.appendChild(container);
+        container.style.display = 'block';
+        
+        // Fade in effect
+        container.style.opacity = '0';
+        container.style.transition = 'opacity 0.5s ease-in-out';
+        setTimeout(() => {
+          container.style.opacity = '1';
+        }, 50);
+        
+        clickCount++;
+      }
+    }
+    
+    // P5.js Setup
+    let sketch = function(p) {
+      p.setup = function() {
+        p.createCanvas(p.windowWidth, p.windowHeight);
+        p.background(0); // Black background
+        p.noStroke();
+      };
+      
+      p.draw = function() {
+        // Redraw the grey background if we want to fade the shapes
+        // p.background(128, 10); // Uncomment if you want fading effect
+        
+        // Draw all psychedelic shapes
+        for (let shape of psychShapes) {
+          shape.update();
+          shape.display();
+        }
+      };
+      
+      p.windowResized = function() {
+        p.resizeCanvas(p.windowWidth, p.windowHeight);
+        p.background(0);
+      };
+      
+      p.mousePressed = function() {
+        // Create a new psychedelic shape when mouse is clicked
+        psychShapes.push(new PsychShape(p, p.mouseX, p.mouseY));
+        // Show image for first three clicks
+        showImage(p.mouseX, p.mouseY);
+      };
+      
+      // Psychedelic Shape class
+      class PsychShape {
+        constructor(p, x, y) {
+          this.p = p;
+          this.x = x;
+          this.y = y;
+          this.size = currentSize; // Use current size instead of random
+          currentSize += 20; // Increase size for next shape
+          this.noiseScale = p.random(0.02, 0.05);
+          this.noiseOffset = p.random(1000);
+          this.colorSpeed = p.random(0.01, 0.03);
+          this.colorOffset = p.random(1000);
+          this.vertexCount = p.floor(p.random(5, 15));
+          this.rotationSpeed = p.random(-0.01, 0.01);
+          this.rotation = 0;
+          
+          // Random shape type
+          this.shapeType = p.floor(p.random(4));
+        }
+        
+        update() {
+          this.rotation += this.rotationSpeed;
+          this.colorOffset += this.colorSpeed;
+        }
+        
+        display() {
+          this.p.push();
+          this.p.translate(this.x, this.y);
+          this.p.rotate(this.rotation);
+          
+          // Psychedelic color cycling
+          let hue = ((this.p.frameCount * 0.5) + this.colorOffset) % 360;
+          this.p.colorMode(this.p.HSB, 360, 100, 100, 1);
+          this.p.fill(hue, 80, 95);
+          
+          // Draw different shapes based on shapeType
+          switch(this.shapeType) {
+            case 0: // Noise blob
+              this.drawNoiseBlob();
+              break;
+            case 1: // Star shape
+              this.drawStar();
+              break;
+            case 2: // Spiral
+              this.drawSpiral();
+              break;
+            case 3: // Fractal-like shape
+              this.drawFractal();
+              break;
+          }
+          
+          this.p.pop();
+        }
+        
+        drawNoiseBlob() {
+          this.p.beginShape();
+          for (let i = 0; i < this.p.TWO_PI; i += this.p.TWO_PI / this.vertexCount) {
+            let noiseVal = this.p.noise(
+              this.p.cos(i) * this.noiseScale + this.noiseOffset, 
+              this.p.sin(i) * this.noiseScale + this.noiseOffset, 
+              this.p.frameCount * 0.01
+            );
+            let radius = this.size * noiseVal;
+            let x = this.p.cos(i) * radius;
+            let y = this.p.sin(i) * radius;
+            this.p.vertex(x, y);
+          }
+          this.p.endShape(this.p.CLOSE);
+        }
+        
+        drawStar() {
+          this.p.beginShape();
+          for (let i = 0; i < this.p.TWO_PI; i += this.p.TWO_PI / this.vertexCount) {
+            // Alternate between inner and outer radius
+            let radius = (i % (this.p.TWO_PI / this.vertexCount * 2) < this.p.TWO_PI / this.vertexCount) ? 
+                         this.size : this.size * 0.4;
+            
+            // Add noise for more organic feel
+            radius += this.p.map(this.p.noise(i, this.p.frameCount * 0.01), 0, 1, -10, 10);
+            
+            let x = this.p.cos(i) * radius;
+            let y = this.p.sin(i) * radius;
+            this.p.vertex(x, y);
+          }
+          this.p.endShape(this.p.CLOSE);
+        }
+        
+        drawSpiral() {
+          this.p.beginShape();
+          let spiralTurns = 3;
+          for (let i = 0; i < this.p.TWO_PI * spiralTurns; i += 0.1) {
+            let radius = (i / (this.p.TWO_PI * spiralTurns)) * this.size;
+            let noiseVal = this.p.noise(
+              this.p.cos(i) * this.noiseScale + this.noiseOffset,
+              this.p.sin(i) * this.noiseScale + this.noiseOffset,
+              this.p.frameCount * 0.01
+            );
+            radius += noiseVal * 15;
+            let x = this.p.cos(i) * radius;
+            let y = this.p.sin(i) * radius;
+            this.p.vertex(x, y);
+          }
+          this.p.endShape();
+        }
+        
+        drawFractal() {
+          this.p.beginShape();
+          for (let i = 0; i < this.p.TWO_PI; i += this.p.TWO_PI / 60) {
+            // Create a fractal-like edge with sin functions at different frequencies
+            let radius = this.size * 0.8;
+            radius += this.p.sin(i * 6) * (this.size * 0.2);
+            radius += this.p.sin(i * 12) * (this.size * 0.1);
+            radius += this.p.sin(i * 18 + this.p.frameCount * 0.05) * (this.size * 0.05);
+            
+            let x = this.p.cos(i) * radius;
+            let y = this.p.sin(i) * radius;
+            this.p.vertex(x, y);
+          }
+          this.p.endShape(this.p.CLOSE);
+        }
+      }
+    };
+    
+    new p5(sketch);
+  </script>
+</body>
+</html>

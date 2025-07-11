@@ -8,12 +8,20 @@
     {
       "src": "api/submit.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "api/heartbeat.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/submit",
       "dest": "/api/submit.js"
+    },
+    {
+      "src": "/api/heartbeat",
+      "dest": "/api/heartbeat.js"
     },
     {
       "src": "/",

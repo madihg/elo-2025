@@ -1,6 +1,8 @@
 // API-based solution for real-time collaborative submissions
 let submissions = [];
 let lastSubmissionCount = 0;
+let activeUsers = new Set();
+let userId = Date.now() + Math.random().toString(36).substr(2, 9);
 
 async function submitSentence() {
     console.log('submitSentence function called');
@@ -21,7 +23,7 @@ async function submitSentence() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ text })
+            body: JSON.stringify({ text, userId })
         });
         
         console.log('Response status:', response.status);
@@ -52,7 +54,7 @@ async function loadSubmissions() {
             console.log('Loaded data:', data);
             submissions = data.submissions;
             displaySubmissions();
-            updateUserCount(data.count);
+            updateUserCount(data.activeUsers);
         } else {
             console.error('Failed to load submissions, status:', response.status);
         }
@@ -71,9 +73,12 @@ function displaySubmissions() {
         sentenceDiv.textContent = submission.text;
         sentenceDiv.style.margin = '10px 0';
         sentenceDiv.style.padding = '10px';
-        sentenceDiv.style.backgroundColor = '#f0f0f0';
+        sentenceDiv.style.backgroundColor = 'white';
+        sentenceDiv.style.color = 'black';
         sentenceDiv.style.borderRadius = '5px';
-        sentenceDiv.style.borderLeft = '4px solid #007bff';
+        sentenceDiv.style.border = '1px solid #ddd';
+        sentenceDiv.style.fontFamily = 'Times New Roman, serif';
+        sentenceDiv.style.fontSize = '16px';
         submissionsDiv.appendChild(sentenceDiv);
     });
 }
@@ -81,7 +86,22 @@ function displaySubmissions() {
 function updateUserCount(count) {
     const userCountElement = document.getElementById('userCount');
     if (userCountElement) {
-        userCountElement.textContent = `${count} contribution(s)`;
+        userCountElement.textContent = `${count} people spreading`;
+    }
+}
+
+// Send heartbeat to track active users
+async function sendHeartbeat() {
+    try {
+        await fetch('/api/heartbeat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId })
+        });
+    } catch (error) {
+        console.error('Error sending heartbeat:', error);
     }
 }
 
@@ -89,6 +109,12 @@ function updateUserCount(count) {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Page loaded, initializing...');
     loadSubmissions();
+    
+    // Send initial heartbeat
+    sendHeartbeat();
+    
+    // Send heartbeat every 30 seconds to stay active
+    setInterval(sendHeartbeat, 30000);
     
     // Poll for new submissions every 3 seconds
     setInterval(async () => {
@@ -101,9 +127,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.count > lastSubmissionCount) {
                     submissions = data.submissions;
                     displaySubmissions();
-                    updateUserCount(data.count);
+                    updateUserCount(data.activeUsers);
                     lastSubmissionCount = data.count;
                 }
+                
+                // Update user count even if no new submissions
+                updateUserCount(data.activeUsers);
             }
         } catch (error) {
             console.error('Error polling for updates:', error);
