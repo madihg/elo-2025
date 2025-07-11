@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spread</title>
+    <title>نحن شعر</title>
     <style>
         body {
             margin: 0;
@@ -11,261 +11,84 @@
             font-family: 'Times New Roman', serif;
             background: white;
             min-height: 100vh;
-            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border: 2px outset #c0c0c0;
+            text-align: center;
+            max-width: 800px;
         }
 
         h1 {
-            text-align: center;
+            font-size: 3em;
             color: black;
-            margin-bottom: 20px;
-            font-size: 24px;
-            font-weight: bold;
+            margin-bottom: 50px;
+            font-weight: normal;
         }
 
-        .input-section {
-            margin-bottom: 20px;
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
-        #textInput {
-            width: 100%;
-            min-height: 80px;
-            padding: 5px;
-            border: 2px inset #c0c0c0;
-            font-size: 14px;
-            font-family: 'Courier New', monospace;
-            resize: none;
-            box-sizing: border-box;
-        }
-
-        .button-container {
-            text-align: center;
-        }
-
-        #spreadBtn {
-            background: #c0c0c0;
+        .letter-button {
+            background: white;
             color: black;
-            border: 2px outset #c0c0c0;
-            padding: 8px 20px;
-            font-size: 14px;
+            border: 2px solid black;
+            padding: 20px 30px;
+            font-size: 2em;
             font-family: 'Times New Roman', serif;
             cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
         }
 
-        #spreadBtn:active {
-            border: 2px inset #c0c0c0;
+        .letter-button:hover {
+            background: black;
+            color: white;
+            transform: translateY(-2px);
         }
 
-        #spreadBtn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
+        .letter-button:active {
+            transform: translateY(0);
         }
 
-        .word {
-            position: absolute;
-            font-size: 16px;
-            font-weight: normal;
-            font-family: 'Courier New', monospace;
-            color: black;
-            pointer-events: none;
-            z-index: 1000;
+        @media (max-width: 600px) {
+            .buttons-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .letter-button {
+                font-size: 1.5em;
+                padding: 15px 25px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
         }
-
-        .word.dot {
-            font-size: 24px;
-            color: black;
-        }
-
-
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="input-section">
-            <textarea 
-                id="textInput" 
-                placeholder="Paste or type your words here... The text field will expand as you add more content."
-            ></textarea>
-        </div>
-        <div class="button-container">
-            <button id="spreadBtn">Scatter</button>
+        <h1>نحن شعر</h1>
+        <div class="buttons-container">
+            <a href="psy-grey.html" class="letter-button">ن</a>
+            <a href="public/how-do-you-home.html" class="letter-button">ح</a>
+            <a href="spread.html" class="letter-button">ن</a>
+            <a href="https://scam-ai-poet.vercel.app/" class="letter-button">ش</a>
+            <a href="towers.html" class="letter-button">ع</a>
+            <a href="erosion.html" class="letter-button">ر</a>
         </div>
     </div>
-    
-
-
-    <script>
-        const textInput = document.getElementById('textInput');
-        const spreadBtn = document.getElementById('spreadBtn');
-        let words = [];
-        let animationId;
-        let timeLeft = 10;
-        let timerInterval;
-
-        // Auto-expand textarea
-        textInput.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = Math.max(100, this.scrollHeight) + 'px';
-        });
-
-        // Spread button functionality
-        spreadBtn.addEventListener('click', function() {
-            const text = textInput.value.trim();
-            if (!text) {
-                alert('Please enter some text first!');
-                return;
-            }
-
-            // Disable button and hide container
-            spreadBtn.disabled = true;
-            document.querySelector('.container').style.display = 'none';
-            
-            // Split text into words
-            words = text.split(/\s+/).filter(word => word.length > 0);
-            
-            // Create word elements
-            words.forEach((word, index) => {
-                createWordElement(word, index);
-            });
-            
-            // Start animation
-            animateWords();
-            
-            // Start countdown
-            startCountdown();
-        });
-
-        function createWordElement(word, index) {
-            const wordElement = document.createElement('div');
-            wordElement.className = 'word';
-            wordElement.textContent = word;
-            wordElement.dataset.index = index;
-            
-            // Random starting position near center
-            const centerX = window.innerWidth / 2;
-            const centerY = window.innerHeight / 2;
-            const startX = centerX + (Math.random() - 0.5) * 100;
-            const startY = centerY + (Math.random() - 0.5) * 100;
-            
-            wordElement.style.left = startX + 'px';
-            wordElement.style.top = startY + 'px';
-            
-            document.body.appendChild(wordElement);
-        }
-
-        function animateWords() {
-            const wordElements = document.querySelectorAll('.word');
-            
-            wordElements.forEach((element, index) => {
-                // Get current position
-                let x = parseFloat(element.style.left);
-                let y = parseFloat(element.style.top);
-                
-                // Get or initialize velocity
-                if (!element.dataset.vx) {
-                    element.dataset.vx = (Math.random() - 0.5) * 2; // Random velocity X
-                    element.dataset.vy = (Math.random() - 0.5) * 2; // Random velocity Y
-                }
-                
-                let vx = parseFloat(element.dataset.vx);
-                let vy = parseFloat(element.dataset.vy);
-                
-                // Update position
-                x += vx;
-                y += vy;
-                
-                // Bounce off edges
-                const wordWidth = element.offsetWidth;
-                const wordHeight = element.offsetHeight;
-                
-                if (x <= 0 || x >= window.innerWidth - wordWidth) {
-                    vx = -vx; // Reverse X velocity
-                    x = Math.max(0, Math.min(window.innerWidth - wordWidth, x));
-                }
-                
-                if (y <= 0 || y >= window.innerHeight - wordHeight) {
-                    vy = -vy; // Reverse Y velocity
-                    y = Math.max(0, Math.min(window.innerHeight - wordHeight, y));
-                }
-                
-                // Update element position and velocity
-                element.style.left = x + 'px';
-                element.style.top = y + 'px';
-                element.dataset.vx = vx;
-                element.dataset.vy = vy;
-                
-                // Add slight rotation for more dynamic movement
-                const rotation = parseFloat(element.style.transform.replace('rotate(', '').replace('deg)', '') || 0);
-                element.style.transform = `rotate(${rotation + 0.5})`;
-            });
-            
-            animationId = requestAnimationFrame(animateWords);
-        }
-
-        function startCountdown() {
-            timeLeft = 10;
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    turnWordsToDots();
-                }
-            }, 1000);
-        }
-
-        function turnWordsToDots() {
-            const wordElements = document.querySelectorAll('.word');
-            
-            wordElements.forEach(element => {
-                element.classList.add('dot');
-                element.textContent = '•';
-                element.style.color = '#333';
-                element.style.fontSize = '12px';
-            });
-        }
-
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            const wordElements = document.querySelectorAll('.word');
-            wordElements.forEach(element => {
-                const x = parseFloat(element.style.left);
-                const y = parseFloat(element.style.top);
-                
-                // Keep words within new window bounds
-                element.style.left = Math.min(x, window.innerWidth) + 'px';
-                element.style.top = Math.min(y, window.innerHeight) + 'px';
-            });
-        });
-
-        // Reset functionality (double-click anywhere to reset)
-        document.addEventListener('dblclick', () => {
-            // Clear animation
-            if (animationId) {
-                cancelAnimationFrame(animationId);
-            }
-            
-            // Clear timer
-            if (timerInterval) {
-                clearInterval(timerInterval);
-            }
-            
-            // Remove all word elements
-            document.querySelectorAll('.word').forEach(element => element.remove());
-            
-            // Reset UI
-            document.querySelector('.container').style.display = 'block';
-            spreadBtn.disabled = false;
-            textInput.value = '';
-            textInput.style.height = '100px';
-        });
-    </script>
 </body>
 </html> 

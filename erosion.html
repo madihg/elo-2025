@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exhibit E</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            font-family: 'Merriweather', serif;
+            overflow: hidden;
+        }
+        .container {
+            display: flex;
+            height: 100%;
+            width: 100%;
+        }
+        .left, .right {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            font-size: 4em;
+        }
+        .left, .right {
+            background-color: white;
+        }
+        .divider {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 8px;
+            background: red;
+        }
+        .blob {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: black;
+            transition: transform 1s linear;
+        }
+        .crumbled {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: black;
+            transition: top 3s linear;
+        }
+        .levitate {
+            transition: top 3s linear;
+        }
+        .price {
+            position: absolute;
+            font-size: 2em;
+            font-family: 'Courier New', monospace;
+        }
+        .lightning-button {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3em;
+            background: none;
+            border: none;
+            cursor: pointer;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left">
+            <div class="word">Here</div>
+        </div>
+        <div class="right">
+            <div class="word">There</div>
+        </div>
+        <div class="divider"></div>
+        <div id="blobsContainer"></div>
+        <div id="price" class="price">$600</div>
+    </div>
+
+    <script>
+        const blobsContainer = document.getElementById('blobsContainer');
+        const priceElement = document.getElementById('price');
+        const parts = 10;
+        let blobs = [];
+        let crossCount = 0;
+        let lastSide = 'left';
+        let price = 600;
+        let allBlobsFallen = false;
+
+        // Generate circle positions for blobs
+        function generateCirclePositions(radius, count) {
+            let positions = [];
+            for (let i = 0; i < count; i++) {
+                let angle = (i / count) * 2 * Math.PI;
+                positions.push({
+                    x: radius * Math.cos(angle),
+                    y: radius * Math.sin(angle)
+                });
+            }
+            return positions;
+        }
+
+        const circlePositions = generateCirclePositions(100, parts);
+
+        circlePositions.forEach((pos, index) => {
+            let blob = document.createElement('div');
+            blob.classList.add('blob');
+            blobsContainer.appendChild(blob);
+            blobs.push({ element: blob, ...pos });
+        });
+
+        document.addEventListener('mousemove', function (e) {
+            blobs.forEach(blob => {
+                blob.element.style.left = e.clientX + blob.x + 'px';
+                blob.element.style.top = e.clientY + blob.y + 'px';
+            });
+
+            priceElement.style.left = e.clientX + 'px';
+            priceElement.style.top = e.clientY + 'px';
+
+            let centerX = window.innerWidth / 2;
+            let mouseX = e.clientX;
+            if ((mouseX < centerX && lastSide === 'right') || (mouseX >= centerX && lastSide === 'left')) {
+                crossCount++;
+                lastSide = mouseX < centerX ? 'left' : 'right';
+                if (crossCount >= 2) {
+                    crossCount = 0;
+                    crumbleBlob();
+                    increasePrice();
+                }
+            }
+        });
+
+        function crumbleBlob() {
+            if (blobs.length > 0) {
+                let blob = blobs.pop().element;
+                if (blobs.length === 1) {
+                    priceElement.remove();
+                    allBlobsFallen = true;
+                }
+                blob.classList.add('crumbled');
+                document.body.appendChild(blob);
+                setTimeout(() => {
+                    blob.style.top = window.innerHeight - 20 + 'px';
+                }, 0);
+            }
+        }
+
+        function increasePrice() {
+            if (price < 1800 && !allBlobsFallen) {
+                price += Math.floor(Math.random() * 200) + 1;
+                priceElement.textContent = `$${price}`;
+            }
+        }
+
+        document.addEventListener('click', function (e) {
+            if (allBlobsFallen && e.target.classList.contains('crumbled')) {
+                showLightningEmoji(e.clientX, e.clientY);
+                levitateBlobs();
+            }
+        });
+
+        function showLightningEmoji(x, y) {
+            let lightningEmoji = document.createElement('div');
+            lightningEmoji.textContent = '⚡️';
+            lightningEmoji.style.position = 'absolute';
+            lightningEmoji.style.left = `${x}px`;
+            lightningEmoji.style.top = `${y - 30}px`;
+            lightningEmoji.style.fontSize = '2em';
+            document.body.appendChild(lightningEmoji);
+
+            setTimeout(() => {
+                lightningEmoji.remove();
+            }, 9000); // Tripled the duration
+        }
+
+        function levitateBlobs() {
+            const middleY = window.innerHeight / 2 - 20;
+            document.querySelectorAll('.crumbled').forEach(blob => {
+                blob.classList.add('levitate');
+                blob.style.top = `${middleY}px`;
+            });
+
+            setTimeout(() => {
+                displayLightningEmojisInCircle();
+            }, 6000); // Reduced time for quicker appearance
+        }
+
+        function displayLightningEmojisInCircle() {
+            const circleCount = 20;
+            const radius = 150;
+            const positions = generateCirclePositions(radius, circleCount);
+
+            positions.forEach(pos => {
+                let lightningEmoji = document.createElement('div');
+                lightningEmoji.textContent = '⚡️';
+                lightningEmoji.style.position = 'absolute';
+                lightningEmoji.style.left = `${window.innerWidth / 2 + pos.x}px`;
+                lightningEmoji.style.top = `${window.innerHeight / 2 + pos.y}px`;
+                lightningEmoji.style.fontSize = '2em';
+                document.body.appendChild(lightningEmoji);
+
+                setTimeout(() => {
+                    // Animate explosion
+                    lightningEmoji.style.transition = 'transform 2s linear, top 2s linear, left 2s linear';
+                    lightningEmoji.style.transform = 'scale(4)';
+                    lightningEmoji.style.left = `${window.innerWidth / 2 + pos.x * 4}px`;
+                    lightningEmoji.style.top = `${window.innerHeight / 2 + pos.y * 4}px`;
+                }, 3000);
+            });
+
+            setTimeout(() => {
+                document.body.style.backgroundColor = 'black';
+                displayLightningButton();
+            }, 5000);
+        }
+
+        function displayLightningButton() {
+            const button = document.createElement('button');
+            button.classList.add('lightning-button');
+            button.textContent = '⚡️';
+            button.onclick = function() {
+                window.location.href = '/Users/halimmadi/Desktop/Borderline counterpulse/Code/Borderline/1a-solo-map-b-chameleon.html';
+            };
+            document.body.appendChild(button);
+        }
+    </script>
+</body>
+</html>
